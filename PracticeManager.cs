@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using TootTallyCore;
 using TootTallyCore.Graphics;
 using TootTallyCore.Utils.TootTallyGlobals;
@@ -103,5 +104,17 @@ namespace TootTallyPractice
             __instance.track_xpos_smoothscrolling = __instance.track_xpos_fixedperframe;
             __instance.noteholderr.anchoredPosition3D = new Vector3((float)__instance.track_xpos_fixedperframe, 0f, 0f);
         }
+
+        [HarmonyPatch(typeof(GameController), nameof(GameController.buildNotes))]
+        [HarmonyPrefix]
+        public static void DeletePastNotesFromLevelData(GameController __instance)
+        {
+            if (!TootTallyGlobalVariables.isPracticing) return;
+            var index = __instance.leveldata.FindIndex(x => BeatToSeconds2(x[0], __instance.tempo) >= StartTime + 2);
+            if (index != -1)
+                __instance.leveldata = __instance.leveldata.GetRange(index, __instance.leveldata.Count - index);
+        }
+
+        public static float BeatToSeconds2(float beat, float bpm) => 60f / bpm * beat;
     }
 }

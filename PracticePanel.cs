@@ -5,6 +5,7 @@ using TootTallyCore.Graphics;
 using TootTallyCore.Graphics.Animations;
 using TootTallyCore.Utils.TootTallyNotifs;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
@@ -42,6 +43,11 @@ namespace TootTallyPractice
             _startTimeSlider.handleRect.sizeDelta = new Vector2(40, 0);
             _startTimeSlider.gameObject.SetActive(true);
             _startTimeSlider.onValueChanged.AddListener(OnStartTimeSliderValueChange);
+
+            EventTrigger.Entry pointerUpEvent = new EventTrigger.Entry();
+            pointerUpEvent.eventID = EventTriggerType.PointerUp;
+            pointerUpEvent.callback.AddListener(delegate { PracticeManager.SetAudioClipTime(); });
+            _startTimeSlider.gameObject.AddComponent<EventTrigger>().triggers.Add(pointerUpEvent);
 
             GameObjectFactory.CreateCustomButton(_panelContainer.transform, Vector2.zero, new Vector2(120, 40), "Back", "PracticeBackBtn", Hide);
             GameObjectFactory.CreateCustomButton(_panelContainer.transform, Vector2.zero, new Vector2(120, 40), "Start", "PracticeStartBtn", StartSong);

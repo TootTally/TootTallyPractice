@@ -79,9 +79,21 @@ namespace TootTallyPractice
         public static void OnPracticeButtonClick()
         {
             if (_practicePanel.IsVisible)
+            {
                 _practicePanel.Hide();
+                _currentInstance.clipPlayer.cancelCrossfades();
+            }
             else
+            {
                 _practicePanel.Show(_currentInstance.alltrackslist[_currentInstance.songindex].trackref);
+                _currentInstance.clipPlayer.clipPlayer.Play();
+            }
+        }
+
+        public static void SetAudioClipTime()
+        {
+            if (StartTime < _currentInstance.clipPlayer.clipPlayer.clip.length)
+                _currentInstance.clipPlayer.clipPlayer.time = StartTime;
         }
 
         public static void StartSongWithPractice()
@@ -119,6 +131,10 @@ namespace TootTallyPractice
             if (index > 0)
                 __instance.leveldata = __instance.leveldata.GetRange(index, __instance.leveldata.Count - index);
         }
+
+        [HarmonyPatch(typeof(LevelSelectController), nameof(LevelSelectController.clickRandomTrack))]
+        [HarmonyPrefix]
+        public static bool SkipRandomizingWhenPracticePanelVisible() => !_practicePanel.IsVisible;
 
         public static float BeatToSeconds2(float beat, float bpm) => 60f / bpm * beat;
     }

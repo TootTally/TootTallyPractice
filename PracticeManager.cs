@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TootTallyCore;
 using TootTallyCore.Graphics;
+using TootTallyCore.Graphics.Animations;
 using TootTallyCore.Utils.TootTallyGlobals;
 using TootTallyCore.Utils.TootTallyNotifs;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace TootTallyPractice
             _practiceButton = GameObject.Instantiate(__instance.playbtn, __instance.fullpanel.transform);
             _practiceButton.name = "PRACTICE";
             var rect = _practiceButton.GetComponent<RectTransform>();
-            rect.anchoredPosition = new Vector2(456, -58);
+            rect.anchoredPosition = new Vector2(461, -58);
             var txts = _practiceButton.GetComponentsInChildren<Text>();
             foreach (var txt in txts)
             {
@@ -77,7 +78,10 @@ namespace TootTallyPractice
 
         public static void OnPracticeButtonClick()
         {
-            _practicePanel.Show(_currentInstance.alltrackslist[_currentInstance.songindex].trackref);
+            if (_practicePanel.IsVisible)
+                _practicePanel.Hide();
+            else
+                _practicePanel.Show(_currentInstance.alltrackslist[_currentInstance.songindex].trackref);
         }
 
         public static void StartSongWithPractice()
@@ -87,10 +91,13 @@ namespace TootTallyPractice
 
         }
 
+        [HarmonyPatch(typeof(LevelSelectController), nameof(LevelSelectController.clickPlay))]
+        [HarmonyPostfix]
+        public static void OnClickPlayAnimatePracticeButton() => TootTallyAnimationManager.AddNewPositionAnimation(_practiceButton.gameObject, new Vector2(661, -58), .35f, new SecondDegreeDynamicsAnimation(2.15f, 1f, 1f));
 
         [HarmonyPatch(typeof(LevelSelectController), nameof(LevelSelectController.advanceSongs))]
         [HarmonyPrefix]
-        public static bool SkipAdvanceSongsIfPracticePanelVisible() => !_practicePanel.IsPracticePanelVisible;
+        public static bool SkipAdvanceSongsIfPracticePanelVisible() => !_practicePanel.IsVisible;
 
         [HarmonyPatch(typeof(GameController), nameof(GameController.playsong))]
         [HarmonyPrefix]
@@ -100,18 +107,16 @@ namespace TootTallyPractice
 
             if (StartTime > __instance.musictrack.clip.length - 1) StartTime = __instance.musictrack.clip.length - 1;
             __instance.musictrack.time = StartTime;
-            __instance.track_xpos_fixedperframe = __instance.zeroxpos + StartTime * -__instance.trackmovemult;
-            __instance.track_xpos_smoothscrolling = __instance.track_xpos_fixedperframe;
-            __instance.noteholderr.anchoredPosition3D = new Vector3((float)__instance.track_xpos_fixedperframe, 0f, 0f);
+            __instance.resync_timer = 5;
         }
 
         [HarmonyPatch(typeof(GameController), nameof(GameController.buildNotes))]
         [HarmonyPrefix]
         public static void DeletePastNotesFromLevelData(GameController __instance)
         {
-            if (!TootTallyGlobalVariables.isPracticing) return;
+            if (!TootTallyGlobalVariables.isPracticing || StartTime <= 2) return;
             var index = __instance.leveldata.FindIndex(x => BeatToSeconds2(x[0], __instance.tempo) >= StartTime + 2);
-            if (index != -1)
+            if (index > 0)
                 __instance.leveldata = __instance.leveldata.GetRange(index, __instance.leveldata.Count - index);
         }
 

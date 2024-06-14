@@ -1,11 +1,8 @@
 ﻿using BaboonAPI.Hooks.Tracks;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using TootTallyCore.Graphics;
+using TootTallyCore.Graphics.Animations;
 using TootTallyCore.Utils.TootTallyNotifs;
 using UnityEngine;
 using UnityEngine.Localization.Components;
@@ -15,12 +12,13 @@ namespace TootTallyPractice
 {
     public class PracticePanel
     {
-        private GameObject _practicePanel;
+        private GameObject _practicePanel, _fgPanel;
+        private TootTallyAnimation _panelAnimation;
         private Text _title;
         private TMP_Text _startTimeLabel;
         private GameObject _panelContainer;
         private Slider _startTimeSlider;
-        public bool IsPracticePanelVisible;
+        public bool IsVisible;
         private bool _isStarting;
 
         public PracticePanel()
@@ -28,11 +26,14 @@ namespace TootTallyPractice
             //Panel content
             _practicePanel = GameObjectFactory.CreateOverlayPanel(null, Vector2.zero, new Vector2(1000, 350), 12f, "PracticePanel");
             _practicePanel.SetActive(false);
-            var fgPanel = _practicePanel.transform.GetChild(0).GetChild(1);
-            GameObject.DestroyImmediate(fgPanel.GetChild(1).gameObject);
-            _title = fgPanel.GetChild(0).GetComponent<Text>();
+            _fgPanel = _practicePanel.transform.GetChild(0).GetChild(1).gameObject;
+            _fgPanel.transform.parent.GetComponent<Image>().color = new Color(0, 0, 0, .01f);
+            _fgPanel.transform.parent.localScale = Vector2.zero;
+
+            GameObject.DestroyImmediate(_fgPanel.transform.GetChild(1).gameObject);
+            _title = _fgPanel.transform.GetChild(0).GetComponent<Text>();
             GameObject.DestroyImmediate(_title.GetComponent<LocalizeStringEvent>());
-            _panelContainer = fgPanel.GetChild(1).gameObject;
+            _panelContainer = _fgPanel.transform.GetChild(1).gameObject;
             _startTimeLabel = GameObjectFactory.CreateSingleText(_panelContainer.transform, "StartTime", "Start Time: 0:00");
             _startTimeLabel.rectTransform.sizeDelta = new Vector2(600, 40);
             _startTimeSlider = GameObjectFactory.CreateSliderFromPrefab(_panelContainer.transform, "StartTimeSlider");
@@ -56,7 +57,7 @@ namespace TootTallyPractice
             containerLayout.childAlignment = TextAnchor.MiddleCenter;
             containerLayout.padding = new RectOffset();
 
-            IsPracticePanelVisible = false;
+            IsVisible = false;
         }
 
         public void Show(string trackref)
@@ -69,21 +70,28 @@ namespace TootTallyPractice
             }
 
             SetSliderMaxValue(track.Value.length - 1);
-            _startTimeSlider.value = 0;
-            IsPracticePanelVisible = true;
+            _startTimeSlider.value = _startTimeSlider.value > track.Value.length - 1 ? 0 : _startTimeSlider.value; //Cheesy way to trigger the OnValueChange event lol
+            IsVisible = true;
+
             _practicePanel.SetActive(true);
+            _panelAnimation?.Dispose();
+            _panelAnimation = TootTallyAnimationManager.AddNewScaleAnimation(_fgPanel.transform.parent.gameObject, Vector3.one, 1f, new SecondDegreeDynamicsAnimation(2.75f, 1f, 0f));
         }
 
         public void Hide()
         {
-            IsPracticePanelVisible = false;
-            _practicePanel.SetActive(false);
+            IsVisible = false;
+            _panelAnimation?.Dispose();
+            _panelAnimation = TootTallyAnimationManager.AddNewScaleAnimation(_fgPanel.transform.parent.gameObject, Vector2.zero, .45f, new SecondDegreeDynamicsAnimation(3.25f, 1f, .25f),
+                delegate { _practicePanel.SetActive(false); });
         }
 
         public void StartSong()
         {
             if (_isStarting) return;
             _isStarting = true;
+            _panelAnimation?.Dispose();
+            TootTallyAnimationManager.AddNewPositionAnimation(_fgPanel.transform.parent.gameObject, new Vector3(2000, 0, 0), .45f, new SecondDegreeDynamicsAnimation(3.25f, 1f, .15f));
             PracticeManager.StartSongWithPractice();
         }
 

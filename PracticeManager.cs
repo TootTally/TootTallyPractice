@@ -62,6 +62,8 @@ namespace TootTallyPractice
         public static void OnPracticeButtonHover(BaseEventData _)
         {
             _btnClickSfx.Play();
+            if (Theme.isDefault) return;
+
             _practiceButton.transform.Find("playBackground").GetComponent<Image>().color = Theme.colors.playButton.backgroundOver;
             _practiceButton.transform.Find("playOutline").GetComponent<Image>().color = Theme.colors.playButton.outlineOver;
             _practiceButton.transform.Find("txt-play/txt-play-front").GetComponent<Text>().color = Theme.colors.playButton.textOver;
@@ -70,6 +72,8 @@ namespace TootTallyPractice
 
         public static void OnPracticeButtonUnhover(BaseEventData _)
         {
+            if (Theme.isDefault) return;
+
             _practiceButton.transform.Find("playBackground").GetComponent<Image>().color = Theme.colors.playButton.background;
             _practiceButton.transform.Find("playOutline").GetComponent<Image>().color = Theme.colors.playButton.outline;
             _practiceButton.transform.Find("txt-play/txt-play-front").GetComponent<Text>().color = Theme.colors.playButton.text;

@@ -90,16 +90,18 @@ namespace TootTallyPractice
             else
             {
                 _practicePanel.Show(_currentInstance.alltrackslist[_currentInstance.songindex].trackref);
-                _currentInstance.clipPlayer.clipPlayer.Play();
+                if (!GlobalVariables.menu_music)
+                {
+                    _currentInstance.clipPlayer.current_trackref = _currentInstance.alltrackslist[_currentInstance.songindex].trackref;
+                    _currentInstance.clipPlayer.beginClipSearch();
+                }
             }
         }
 
         public static void SetAudioClipTime()
         {
-            if (StartTime < _currentInstance.clipPlayer.clipPlayer.clip.length)
+            if (_currentInstance.clipPlayer.clipPlayer.clip != null && StartTime < _currentInstance.clipPlayer.clipPlayer.clip.length)
                 _currentInstance.clipPlayer.clipPlayer.time = StartTime;
-            if (!_currentInstance.clipPlayer.clipPlayer.isPlaying)
-                _currentInstance.clipPlayer.clipPlayer.Play(); //Force play if its turned off
         }
 
         public static void StopAudioClip()

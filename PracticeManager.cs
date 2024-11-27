@@ -98,6 +98,13 @@ namespace TootTallyPractice
         {
             if (StartTime < _currentInstance.clipPlayer.clipPlayer.clip.length)
                 _currentInstance.clipPlayer.clipPlayer.time = StartTime;
+            if (!_currentInstance.clipPlayer.clipPlayer.isPlaying)
+                _currentInstance.clipPlayer.clipPlayer.Play(); //Force play if its turned off
+        }
+
+        public static void StopAudioClip()
+        {
+            _currentInstance.clipPlayer.clipPlayer.Stop();
         }
 
         public static void StartSongWithPractice()

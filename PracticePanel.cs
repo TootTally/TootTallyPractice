@@ -90,6 +90,8 @@ namespace TootTallyPractice
             _panelAnimation?.Dispose();
             _panelAnimation = TootTallyAnimationManager.AddNewScaleAnimation(_fgPanel.transform.parent.gameObject, Vector2.zero, .45f, new SecondDegreeDynamicsAnimation(3.25f, 1f, .25f),
                 delegate { _practicePanel.SetActive(false); });
+            if (!GlobalVariables.menu_music)
+                PracticeManager.StopAudioClip();
         }
 
         public void StartSong()

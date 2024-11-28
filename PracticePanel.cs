@@ -43,6 +43,7 @@ namespace TootTallyPractice
             _startTimeSlider.handleRect.sizeDelta = new Vector2(40, 0);
             _startTimeSlider.gameObject.SetActive(true);
             _startTimeSlider.onValueChanged.AddListener(OnStartTimeSliderValueChange);
+            _startTimeSlider.minValue = 2;
 
             EventTrigger.Entry pointerUpEvent = new EventTrigger.Entry();
             pointerUpEvent.eventID = EventTriggerType.PointerUp;

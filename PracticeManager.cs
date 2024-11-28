@@ -130,8 +130,8 @@ namespace TootTallyPractice
         {
             if (!TootTallyGlobalVariables.isPracticing) return;
 
-            if (StartTime > __instance.musictrack.clip.length - 1) StartTime = __instance.musictrack.clip.length - 1;
-            __instance.musictrack.time = StartTime;
+            StartTime = Mathf.Clamp(StartTime - 2, 0, __instance.musictrack.clip.length - 1);
+            __instance.musictrack.time = StartTime; //Just to be safe
             __instance.resync_timer = 5;
         }
 

@@ -92,7 +92,7 @@ namespace TootTallyPractice
                 _practicePanel.Show(_currentInstance.alltrackslist[_currentInstance.songindex].trackref);
                 if (!GlobalVariables.menu_music)
                 {
-                    _currentInstance.clipPlayer.current_trackref = _currentInstance.alltrackslist[_currentInstance.songindex].trackref;
+                    _currentInstance.clipPlayer.current_track = _currentInstance.alltrackslist[_currentInstance.songindex];
                     _currentInstance.clipPlayer.beginClipSearch();
                 }
             }

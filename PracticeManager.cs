@@ -1,11 +1,7 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using TootTallyCore;
-using TootTallyCore.Graphics;
 using TootTallyCore.Graphics.Animations;
 using TootTallyCore.Utils.TootTallyGlobals;
-using TootTallyCore.Utils.TootTallyNotifs;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Components;
@@ -130,7 +126,7 @@ namespace TootTallyPractice
         {
             if (!TootTallyGlobalVariables.isPracticing) return;
 
-            StartTime = Mathf.Clamp(StartTime - 2, 0, __instance.musictrack.clip.length - 1);
+            StartTime = Mathf.Clamp(StartTime, 0, __instance.musictrack.clip.length - 1);
             __instance.musictrack.time = StartTime; //Just to be safe
             __instance.resync_timer = 5;
         }

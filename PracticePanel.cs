@@ -106,7 +106,7 @@ namespace TootTallyPractice
 
         public void OnStartTimeSliderValueChange(float value)
         {
-            PracticeManager.StartTime = value;
+            PracticeManager.StartTime = value - 2;
             _startTimeLabel.text = $"Start Time: {TimeSpan.FromSeconds(value):mm\\:ss} / {TimeSpan.FromSeconds(_startTimeSlider.maxValue):mm\\:ss}";
         }
 

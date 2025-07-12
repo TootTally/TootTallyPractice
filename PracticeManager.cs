@@ -113,7 +113,6 @@ namespace TootTallyPractice
         {
             TootTallyGlobalVariables.isPracticing = true;
             _currentInstance.clickPlay();
-
         }
 
         [HarmonyPatch(typeof(LevelSelectController), nameof(LevelSelectController.clickPlay))]
@@ -130,8 +129,7 @@ namespace TootTallyPractice
         {
             if (!TootTallyGlobalVariables.isPracticing) return;
 
-            StartTime = Mathf.Clamp(StartTime - 2, 0, __instance.musictrack.clip.length - 1);
-            __instance.musictrack.time = StartTime; //Just to be safe
+            __instance.musictrack.time = Mathf.Clamp(StartTime - 2, 0, __instance.musictrack.clip.length - 1); //Just to be safe
             __instance.resync_timer = 5;
         }
 
@@ -139,8 +137,8 @@ namespace TootTallyPractice
         [HarmonyPrefix]
         public static void DeletePastNotesFromLevelData(GameController __instance)
         {
-            if (!TootTallyGlobalVariables.isPracticing || StartTime <= 2) return;
-            var index = __instance.leveldata.FindIndex(x => BeatToSeconds2(x[0], __instance.tempo) >= StartTime + 2);
+            if (!TootTallyGlobalVariables.isPracticing) return;
+            var index = __instance.leveldata.FindIndex(x => BeatToSeconds2(x[0], __instance.tempo) >= StartTime);
             if (index > 0)
                 __instance.leveldata = __instance.leveldata.GetRange(index, __instance.leveldata.Count - index);
         }

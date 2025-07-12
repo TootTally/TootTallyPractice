@@ -1,11 +1,7 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using TootTallyCore;
-using TootTallyCore.Graphics;
 using TootTallyCore.Graphics.Animations;
 using TootTallyCore.Utils.TootTallyGlobals;
-using TootTallyCore.Utils.TootTallyNotifs;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Components;

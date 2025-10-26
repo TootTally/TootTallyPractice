@@ -60,7 +60,6 @@ namespace TootTallyPractice
         public void UnloadModule()
         {
             _harmony.UnpatchSelf();
-            settingPage.Remove();
             LogInfo($"Module unloaded!");
         }
 

@@ -3,6 +3,7 @@ using System;
 using TMPro;
 using TootTallyCore.Graphics;
 using TootTallyCore.Graphics.Animations;
+using TootTallyCore.Utils.TootTallyGlobals;
 using TootTallyCore.Utils.TootTallyNotifs;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -83,6 +84,8 @@ namespace TootTallyPractice
             _practicePanel.SetActive(true);
             _panelAnimation?.Dispose();
             _panelAnimation = TootTallyAnimationManager.AddNewScaleAnimation(_fgPanel.transform.parent.gameObject, Vector3.one, 1f, new SecondDegreeDynamicsAnimation(2.75f, 1f, 0f));
+            
+            OnStartTimeSliderValueChange(_startTimeSlider.value); // Update the label to reflect the current game speed
         }
 
         public void Hide()
@@ -107,7 +110,13 @@ namespace TootTallyPractice
         public void OnStartTimeSliderValueChange(float value)
         {
             PracticeManager.StartTime = value;
-            _startTimeLabel.text = $"Start Time: {TimeSpan.FromSeconds(PracticeManager.StartTime):mm\\:ss} / {TimeSpan.FromSeconds(_startTimeSlider.maxValue):mm\\:ss}";
+            float speed = TootTallyGlobalVariables.gameSpeedMultiplier;
+            float start_time = PracticeManager.StartTime;
+            float max_time = _startTimeSlider.maxValue;
+            string label_text = $"Start Time: {TimeSpan.FromSeconds(start_time / speed):mm\\:ss} / {TimeSpan.FromSeconds(max_time / speed):mm\\:ss}";
+            if (speed != 1f)
+                label_text += $"\n({TimeSpan.FromSeconds(start_time):mm\\:ss} / {TimeSpan.FromSeconds(max_time):mm\\:ss} at 1x)";
+            _startTimeLabel.text = label_text;
         }
 
         public void SetSliderMaxValue(float maxValue) => _startTimeSlider.maxValue = maxValue;
